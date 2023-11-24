@@ -25,29 +25,39 @@ class AdaptiveScheduler:
             print(interval)
             
             if interval > 0:
-                self.schedule_known_plant_tasks(plant, interval, scheduled_tasks, task_dates)
+                scheduled_tasks.append(self.schedule_known_plant_tasks(plant, watering_freq, interval, scheduled_tasks, task_dates))
             else:
                 self.schedule_unknown_plant_tasks(plant, scheduled_tasks, task_dates)
         print(scheduled_tasks)
         return scheduled_tasks
 
-    def schedule_known_plant_tasks(self, plant, interval, scheduled_tasks, task_dates):
-        next_watering_date = datetime.date.today()
-        while next_watering_date < datetime.date.today() + datetime.timedelta(days=30):
-            next_watering_date = self.adjust_date_if_crowded(next_watering_date, task_dates)
-            task_description = f"Watering {plant.name}"
-            task = Task(task_description, next_watering_date, "Once", "Morning")
-            scheduled_tasks.append(task)
-            task_dates[next_watering_date] = task_dates.get(next_watering_date, 0) + 1
-            next_watering_date += datetime.timedelta(days=interval)
+    def schedule_known_plant_tasks(self, plant, watering_freq, interval, scheduled_tasks, task_dates):
+        plant.clear_recommended_tasks()
+        new_tasks = []
+        rec_date = 'Monday'
+        rec_frequency = 'frequent'
+        rec_day_of_time = 'Morning'
+
+        changedTask = False
+
+        print(plant.sim_database_plant)
+        print(self.plants_dict.get(plant.sim_database_plant, {}).get('watering'))
+        print(interval)
+        
+        if plant.tasks:
+            for task in plant.tasks:
+                if task.frequency != watering_freq:
+                    rec_frequency = watering_freq
+                    changedTask = True 
+                rec_task = Task(task.task_name, rec_date, rec_frequency, rec_day_of_time)
+                plant.add_recommended_task(rec_task)
+                new_tasks.append(rec_task)
+        print(new_tasks)
+
+        return new_tasks      
 
     def schedule_unknown_plant_tasks(self, plant, scheduled_tasks, task_dates):
-        for task in plant.tasks:
-            scheduled_date = self.adjust_date_if_crowded(task.scheduled_date, task_dates)
-            if scheduled_date != task.scheduled_date:
-                plant.modify_task(task.task_name, scheduled_date, task.frequency, task.time_of_day)
-            scheduled_tasks.append(task)
-            task_dates[scheduled_date] = task_dates.get(scheduled_date, 0) + 1
+        pass
 
     def adjust_date_if_crowded(self, date, task_dates):
         while task_dates.get(date, 0) > MAX_TASKS_PER_DAY:
@@ -57,9 +67,9 @@ class AdaptiveScheduler:
     def determine_interval(self, watering_freq):
         # Logic for determining the interval
         if watering_freq == "frequent":
-            return 1
+            return 2
         elif watering_freq == "average":
-            return 3
+            return 7
         elif watering_freq == "minimum":
             return 30 
         else:

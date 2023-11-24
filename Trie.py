@@ -40,7 +40,6 @@ class Trie:
             words.extend(self._get_words_from_node(next_node, prefix + char))
         return words
 
-
 def build_plant_trie(plant_names):
     trie = Trie()
     for name in plant_names:

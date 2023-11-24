@@ -1,3 +1,5 @@
+
+FREQUENCIES = {"Once a week": "average", "Multiple times a week": "frequent", "Once a month": "minimum"}
 class Task:
     """
     Represents a task associated with plant care, such as watering or fertilizing.
@@ -7,12 +9,11 @@ class Task:
         frequency (str): Frequency of the task.
         time_of_day (str): Time of the day for the task.
     """
-
     def __init__(self, task_name, scheduled_date, frequency, time_of_day):
         """initializes task"""
         self.task_name = task_name
         self.scheduled_date = scheduled_date
-        self.frequency = frequency
+        self.frequency = FREQUENCIES.get(frequency)
         self.time_of_day = time_of_day
 
     def get_priority(self):
@@ -23,7 +24,7 @@ class Task:
             month_day_priority = 31  # Default for monthly tasks
 
             # Check if the task is scheduled by day of the week or date of the month
-            if self.frequency in ["Once a week", "Multiple times a week"]:
+            if self.frequency in ["average", "frequent"]:
                 day = day_priority.get(self.scheduled_date, 8)  # Handle special cases or errors
             else:  # "Once a month"
                 # Extract the day of the month from the scheduled_date (e.g., "9 of each month")

@@ -21,3 +21,37 @@ def fetch_plant_data(base_url, max_pages):
                     }
                 
     return plants_dict_from_database
+
+def merge_sort(arr, key_func):
+    if len(arr) > 1:
+        mid = len(arr) // 2  # Finding the mid of the array
+        L = arr[:mid]        # Dividing the array elements into 2 halves
+        R = arr[mid:]
+
+        merge_sort(L, key_func)  # Sorting the first half
+        merge_sort(R, key_func)  # Sorting the second half
+
+        i = j = k = 0
+
+        # Copy data to temp arrays L[] and R[]
+        while i < len(L) and j < len(R):
+            if key_func(L[i]) < key_func(R[j]):
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        # Checking if any element was left
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+    return arr
