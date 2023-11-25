@@ -244,23 +244,32 @@ if option == "📑 View Task Schedule":
 
 if option == "View All Tasks":
     all_current_tasks = st.session_state.pca.return_all_tasks()
-    task_table = []
+    task_to_delete = None
 
-    for task in all_current_tasks:
-        task_data = {
-            "Task": task.task_name, 
-            "Plant": [p.name for p in st.session_state.pca.plants if task in p.tasks][0], 
-            "Date": task.scheduled_date, 
-            "Time of Day": task.time_of_day
-        }
+    # Header Row
+    header_cols = st.columns([2, 2, 2, 2, 1])  # Adjust the ratios as needed
+    header_cols[0].write("Task")
+    header_cols[1].write("Plant")
+    header_cols[2].write("Date")
+    header_cols[3].write("Time of Day")
+    header_cols[4].write("")  # For the delete button
 
-        task_table.append(task_data)
+    # Task Rows
+    for i, task in enumerate(all_current_tasks):
+        cols = st.columns([2, 2, 2, 2, 2])  # Adjust the ratios as needed
+        cols[0].write(task.task_name)
+        plant_name = [p.name for p in st.session_state.pca.plants if task in p.tasks][0]
+        cols[1].write(plant_name)
+        cols[2].write(task.scheduled_date)
+        cols[3].write(task.time_of_day)
+        if cols[4].button("Delete", key=f"delete_{i}"):
+            task_to_delete = task
 
-    if task_table:
-        st.subheader("All Current Tasks")
-        st.table(task_table)
-    else:
-        st.write("No tasks have been scheduled yet.")
+    if task_to_delete:
+        for plant in st.session_state.pca.plants:
+            if task_to_delete in plant.tasks:
+                plant.tasks.remove(task_to_delete)
+                st.experimental_rerun()
     
     sorting_options = ["Day of Week", "Monthly Tasks", "Time of Day"]
     sort_method = st.selectbox("How do you want to sort your tasks:", sorting_options)
