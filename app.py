@@ -7,10 +7,8 @@ from Plant import Plant
 from utils import fetch_plant_data, merge_sort, filter_out_list
 from Trie import build_plant_trie
 
-# Initial setup
-# https://perenual.com/api/species-list?key=sk-7nhl6560db5f5bed93100&edible=1
 
-BASE_URL = 'https://trefle.io/api/v1/plants?token=WoVOkNUumu6SWX9B5B9ZTjn3A_M6Bi8apCyfFSXBKoM'
+BASE_URL = 'https://perenual.com/api/species-list?key=sk-7nhl6560db5f5bed93100&edible=1'
 MAX_PAGES = 1
 
 @st.cache_data
@@ -32,7 +30,7 @@ if 'pca' not in st.session_state:
 st.title("🪴 My Plant Care Assistant 📝")
 
 # Sidebar for options
-options = ["🪴 Add Plant", "📝 Schedule Task", "👩‍🌾 My Garden", "📑 View Task Schedule", "View All Tasks"]
+options = ["🪴 Add Plant", "📝 Schedule Task", "👩‍🌾 My Garden", "🗓️ View Task Schedule", "📒 View All Tasks"]
 option = st.sidebar.selectbox("Choose an Option:", options)
 
 if option == "🪴 Add Plant":
@@ -143,6 +141,16 @@ if option == "📝 Schedule Task":
 
 if option == "👩‍🌾 My Garden":
     st.header("👩‍🌾 My Garden")
+
+    watering_data = {
+            "🌺 Frequent": "Recommended to water 2-3 times a week", 
+            "🍇 Average": "Recommended to water at least once a week", 
+            "🎍 Minimum": "Recommended to water once a month", 
+            "🌵 None": "Can live with minimal or no water"
+        }
+    
+    st.table(watering_data)
+
     COLS_PER_ROW = 4
     
     # Change here: Use list comprehension to get plant names from Plant objects
@@ -176,19 +184,19 @@ if option == "👩‍🌾 My Garden":
         selected_plant = st.session_state.pca.find_plant(st.session_state['selected_plant'])
         if selected_plant:
             sim_plant = selected_plant.sim_database_plant
-            st.write(f"Details for {selected_plant.name}:")
-            st.write(f"Last Watered: {selected_plant.date_last_watered}")
-            st.write(f"Plant in Database: {sim_plant}")
+            st.markdown(f"**Details for {selected_plant.name}:**")
+            st.write(f"**Last Watered**: {selected_plant.date_last_watered}")
+            st.write(f"**Plant in Database**: {sim_plant}")
             watering_freq = plants_dict.get(sim_plant, {}).get('watering', 'No suggestions')
-            st.write(f"Suggested Watering: {watering_freq}")
+            st.write(f"**Suggested Watering**: {watering_freq}")
       
             for task in selected_plant.tasks:
-                st.write(f"Task: {task.task_name} - Date: {task.scheduled_date} - Time of Day: {task.time_of_day}")
+                st.write(f"**Task**: {task.task_name} - Date: {task.scheduled_date} - Time of Day: {task.time_of_day}")
 
         else:
             st.error("Selected plant not found.")
 
-if option == "📑 View Task Schedule":
+if option == "🗓️ View Task Schedule":
     today = datetime.today()
     day_of_week = today.strftime("%A")  # E.g., "Monday"
     day_of_month = today.day
@@ -223,10 +231,10 @@ if option == "📑 View Task Schedule":
 
     # Display Daily Tasks in a table
     if daily_tasks:
-        st.subheader("Daily Tasks")
+        st.subheader("Tasks for Today")
         st.table(daily_tasks)
     else:
-        st.write("No daily tasks scheduled.")
+        st.write("No tasks for today scheduled.")
 
     # Display Weekly Tasks in a table
     if weekly_tasks:
@@ -242,61 +250,60 @@ if option == "📑 View Task Schedule":
     else:
         st.write("No monthly tasks scheduled.")
 
-if option == "View All Tasks":
+if option == "📒 View All Tasks":
     all_current_tasks = st.session_state.pca.return_all_tasks()
     task_to_delete = None
+    sorted_table = []
 
-    # Header Row
-    header_cols = st.columns([2, 2, 2, 2, 1])  # Adjust the ratios as needed
-    header_cols[0].write("Task")
-    header_cols[1].write("Plant")
-    header_cols[2].write("Date")
-    header_cols[3].write("Time of Day")
-    header_cols[4].write("")  # For the delete button
+    if all_current_tasks:
+        header_cols = st.columns([2, 2, 2, 2, 1])  # Adjust the ratios as needed
+        header_cols[0].write("Task")
+        header_cols[1].write("Plant")
+        header_cols[2].write("Date")
+        header_cols[3].write("Time of Day")
+        header_cols[4].write("") 
 
-    # Task Rows
-    for i, task in enumerate(all_current_tasks):
-        cols = st.columns([2, 2, 2, 2, 2])  # Adjust the ratios as needed
-        cols[0].write(task.task_name)
-        plant_name = [p.name for p in st.session_state.pca.plants if task in p.tasks][0]
-        cols[1].write(plant_name)
-        cols[2].write(task.scheduled_date)
-        cols[3].write(task.time_of_day)
-        if cols[4].button("Delete", key=f"delete_{i}"):
-            task_to_delete = task
+        for i, task in enumerate(all_current_tasks):
+            cols = st.columns([2, 2, 2, 2, 2])  # Adjust the ratios as needed
+            cols[0].write(task.task_name)
+            plant_name = [p.name for p in st.session_state.pca.plants if task in p.tasks][0]
+            cols[1].write(plant_name)
+            cols[2].write(task.scheduled_date)
+            cols[3].write(task.time_of_day)
+            if cols[4].button("Delete", key=f"delete_{i}"):
+                task_to_delete = task
 
-    if task_to_delete:
-        for plant in st.session_state.pca.plants:
-            if task_to_delete in plant.tasks:
-                plant.tasks.remove(task_to_delete)
-                st.experimental_rerun()
+        if task_to_delete:
+            for plant in st.session_state.pca.plants:
+                if task_to_delete in plant.tasks:
+                    plant.tasks.remove(task_to_delete)
+                    st.experimental_rerun()
     
-    sorting_options = ["Day of Week", "Monthly Tasks", "Time of Day"]
-    sort_method = st.selectbox("How do you want to sort your tasks:", sorting_options)
-    days_of_week = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-    time_of_day_options = ["Morning", "Afternoon", "Evening"]
-    tasks_to_show = []
+        sorting_options = ["Day of Week", "Monthly Tasks", "Time of Day"]
+        sort_method = st.selectbox("How do you want to sort your tasks:", sorting_options)
+        days_of_week = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        time_of_day_options = ["Morning", "Afternoon", "Evening"]
 
-    # Conditional Input based on Frequency
-    if sort_method == "Day of Week":
-        selected_day = st.selectbox("Select which day of the week", days_of_week)
-        filtered_tasks = filter_out_list(all_current_tasks, selected_day)
-        key_func = lambda task: days_of_week.index(task.scheduled_date) # For sorting by day of the week
-    elif sort_method == "Monthly Tasks":
-        filtered_tasks = filter_out_list(all_current_tasks, 'month')
-        key_func = lambda task: int(task.scheduled_date.split()[0])
-    elif sort_method == "Time of Day":
-        filtered_tasks = all_current_tasks
-        key_func = lambda task: time_of_day_options.index(task.time_of_day)
+        # Conditional Input based on Frequency
+        if sort_method == "Day of Week":
+            selected_day = st.selectbox("Select which day of the week", days_of_week)
+            filtered_tasks = filter_out_list(all_current_tasks, selected_day)
+            key_func = lambda task: days_of_week.index(task.scheduled_date) # For sorting by day of the week
+        elif sort_method == "Monthly Tasks":
+            filtered_tasks = filter_out_list(all_current_tasks, 'month')
+            key_func = lambda task: int(task.scheduled_date.split()[0])
+        elif sort_method == "Time of Day":
+            filtered_tasks = all_current_tasks
+            key_func = lambda task: time_of_day_options.index(task.time_of_day)
 
     # Apply merge_sort if a sorting method is selected
-    sorted_table = []
-    if key_func:
-        sorted_tasks = merge_sort(filtered_tasks, key_func)
-    else:
-        sorted_tasks = filtered_tasks
+        
+        if key_func:
+            sorted_tasks = merge_sort(filtered_tasks, key_func)
+        else:
+            sorted_tasks = filtered_tasks
 
-    for task in sorted_tasks:
+        for task in sorted_tasks:
             sorted_data = {
                 "Task": task.task_name, 
                 "Plant": [p.name for p in st.session_state.pca.plants if task in p.tasks][0], 
@@ -306,8 +313,8 @@ if option == "View All Tasks":
             sorted_table.append(sorted_data)
 
     # Display the tasks
-    if sorted_tasks:
-        st.subheader(f"Sorted Tasks By: {sort_method}")
-        st.table(sorted_table)
+        if sorted_tasks:
+            st.subheader(f"Sorted Tasks By: {sort_method}")
+            st.table(sorted_table)
     else:
         st.write("No tasks have been scheduled yet.")
