@@ -55,3 +55,16 @@ def merge_sort(arr, key_func):
             k += 1
 
     return arr
+
+def filter_out_list(lst, condition):
+    filtered_tasks = []
+    for item in lst:
+        date = item.scheduled_date
+        # Check if the condition is 'month' for monthly tasks
+        if condition == 'month' and ' of each month' in date:
+            filtered_tasks.append(item)
+        # If conditions is a list of strings, it's assumed to be for weekly tasks
+        elif date == condition:
+            filtered_tasks.append(item)
+
+    return filtered_tasks

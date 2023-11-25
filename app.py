@@ -4,7 +4,7 @@ import streamlit as st
 # Import custom modules
 from PlantCareAssistant import PlantCareAssistant
 from Plant import Plant
-from utils import fetch_plant_data
+from utils import fetch_plant_data, merge_sort, filter_out_list
 from Trie import build_plant_trie
 
 # Initial setup
@@ -244,7 +244,6 @@ if option == "📑 View Task Schedule":
 
 if option == "View All Tasks":
     all_current_tasks = st.session_state.pca.return_all_tasks()
-    st.write(all_current_tasks)
     task_table = []
 
     for task in all_current_tasks:
@@ -263,19 +262,43 @@ if option == "View All Tasks":
     else:
         st.write("No tasks have been scheduled yet.")
     
-    frequency = st.selectbox("Select frequency", ["Once a week", "Multiple times a week", "Once a month"])
-    day_options = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    time_of_day = st.radio("Select time of day", ["Morning", "Afternoon", "Evening"])
+    sorting_options = ["Day of Week", "Monthly Tasks", "Time of Day"]
+    sort_method = st.selectbox("How do you want to sort your tasks:", sorting_options)
+    days_of_week = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    time_of_day_options = ["Morning", "Afternoon", "Evening"]
+    tasks_to_show = []
 
-    multiple_days = False
     # Conditional Input based on Frequency
-    if frequency == "Once a week":
-        day_of_week = st.selectbox("Select day of the week", day_options)
-        date = day_of_week
-    elif frequency == "Multiple times a week":
-        days_of_week = st.multiselect("Select which days of the week", day_options, default=day_options[:2])
-        date = ", ".join(days_of_week)
-        multiple_days = True
+    if sort_method == "Day of Week":
+        selected_day = st.selectbox("Select which day of the week", days_of_week)
+        filtered_tasks = filter_out_list(all_current_tasks, selected_day)
+        key_func = lambda task: days_of_week.index(task.scheduled_date) # For sorting by day of the week
+    elif sort_method == "Monthly Tasks":
+        filtered_tasks = filter_out_list(all_current_tasks, 'month')
+        key_func = lambda task: int(task.scheduled_date.split()[0])
+    elif sort_method == "Time of Day":
+        filtered_tasks = all_current_tasks
+        key_func = lambda task: time_of_day_options.index(task.time_of_day)
+
+    # Apply merge_sort if a sorting method is selected
+    sorted_table = []
+    if key_func:
+        sorted_tasks = merge_sort(filtered_tasks, key_func)
     else:
-        day_of_month = st.selectbox("Select day of the month", list(range(1, 31)))
-        date = f"{day_of_month} of each month"
+        sorted_tasks = filtered_tasks
+
+    for task in sorted_tasks:
+            sorted_data = {
+                "Task": task.task_name, 
+                "Plant": [p.name for p in st.session_state.pca.plants if task in p.tasks][0], 
+                "Date": task.scheduled_date, 
+                "Time of Day": task.time_of_day
+            }
+            sorted_table.append(sorted_data)
+
+    # Display the tasks
+    if sorted_tasks:
+        st.subheader(f"Sorted Tasks By: {sort_method}")
+        st.table(sorted_table)
+    else:
+        st.write("No tasks have been scheduled yet.")
