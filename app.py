@@ -179,6 +179,8 @@ if option == "👩‍🌾 My Garden":
                             st.session_state['selected_plant'] = plant_name
                     st.image(plant.image_url, caption=plant_name, width=150)
 
+                    
+
     # Display details of selected plant
     if st.session_state['selected_plant']:
         selected_plant = st.session_state.pca.find_plant(st.session_state['selected_plant'])
