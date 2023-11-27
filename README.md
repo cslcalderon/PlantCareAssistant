@@ -19,7 +19,7 @@ The application runs as follows:
    
 5. 📒 View All Tasks: Shows all tasks ever created with the ability to delete the tasks. Also allows user to sort and filter tasks. 
 
-## Dependencies and Installation
+# Dependencies and Installation
 ----------------------------
 To install the My Plant Care Assistant App, these steps musy be followed:
 
@@ -33,12 +33,14 @@ To install the My Plant Care Assistant App, these steps musy be followed:
 3. Optional to obtain your personal API key from the website see, but for purposes of project, one has been provided with minimum tokens, so please be wary of clearing cache and restarting app multiple times since could result in error. 
 ```
 
-## Usage
+# Usage
 -----
 To run the app, open your terminal, navigate to the folder in which you have placed this project and type in 'streamlit run app.py'
 
 
 PlantCareAssistant.py
+
+
 #### `PlantCareAssistant` Class
 - **Purpose**: Manages plant care tasks and plants.
 - **Methods**:
