@@ -1,8 +1,7 @@
 import requests
-import random
 
 def fetch_plant_data(base_url, max_pages):
-    water_rates = ['frequent', 'average', 'minimum', 'none']
+    # water_rates = ['frequent', 'average', 'minimum', 'none']
     """fetches plant data given a base url and the number of pages to request"""
     plants_dict_from_database = {}
     for page in range(1, max_pages + 1):
@@ -16,13 +15,14 @@ def fetch_plant_data(base_url, max_pages):
                 plants_dict_from_database[plant_name.lower()] = {
                         'genus': plant.get('genus', 'Unknown genus'),
                         'species': plant.get('scientific_name', 'Unknown species'),
-                        'watering': random.choice(water_rates),
+                        'watering': plant.get('watering', 'Unknown watering'),
                         'sunlight': plant.get('sunlight', 'full_sun')
                     }
                 
     return plants_dict_from_database
 
 def merge_sort(arr, key_func):
+    """Implements the merge sort algorithm to sort a list based on a specified key function."""
     if len(arr) > 1:
         mid = len(arr) // 2  # Finding the mid of the array
         L = arr[:mid]        # Dividing the array elements into 2 halves
@@ -57,6 +57,8 @@ def merge_sort(arr, key_func):
     return arr
 
 def filter_out_list(lst, condition):
+    """Filters out tasks from a list based on a specified condition, such as 'month' for monthly
+    tasks or a list of strings for weekly tasks."""
     filtered_tasks = []
     for item in lst:
         date = item.scheduled_date

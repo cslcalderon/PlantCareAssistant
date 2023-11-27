@@ -9,17 +9,17 @@ from Trie import build_plant_trie
 
 
 BASE_URL = 'https://perenual.com/api/species-list?key=sk-7nhl6560db5f5bed93100&edible=1'
-MAX_PAGES = 1
+MAX_PAGES = 5
 
 @st.cache_data
 def cached_fetch_plant_data(url, pages):
-    return fetch_plant_data(url, pages)
+    return fetch_plant_data(url, pages) 
 
 plants_dict = cached_fetch_plant_data(BASE_URL, MAX_PAGES)
+print(plants_dict)
 
 
 all_plant_names = list(plants_dict.keys())
-print(all_plant_names)
 plant_trie = build_plant_trie(all_plant_names)
 
 # Create app    
@@ -61,7 +61,7 @@ if option == "🪴 Add Plant":
             st.session_state.plant_in_database = None
 
     plant_name = st.text_input("Enter plant name")
-    plant_image_url = st.text_input("Enter plant image URL")
+    plant_image_url = st.text_input("Enter plant image URL to add picture to your plant")
     last_watered = st.date_input("Last watered date")
 
     # Adding a Plant

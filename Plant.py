@@ -16,12 +16,16 @@ class Plant:
         new_task = Task(task_name, scheduled_date, task_frequency, task_time_of_day)
         self.tasks.append(new_task)
 
-    def add_recommended_task(self, rec_task):
-        """Modifies an existing task based on the given parameters."""
-        self.recommended_tasks.append(rec_task)
+    def change_watering_date(self, new_watering_last_water):
+        """Changes watering date with updated date that is given"""
+        self.date_last_watered = new_watering_last_water
+
+    # def add_recommended_task(self, rec_task):
+    #     """Modifies an existing task based on the given parameters."""
+    #     self.recommended_tasks.append(rec_task)
     
-    def clear_recommended_tasks(self):
-        self.recommended_tasks = []
+    # def clear_recommended_tasks(self):
+    #     self.recommended_tasks = []
 
     
 
