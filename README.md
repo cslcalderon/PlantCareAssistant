@@ -1,4 +1,44 @@
-# PlantCareAssistant
+# My Plant Care Assistant
+
+## Introduction
+------------
+My Plant Care Assistant is an application that can help manage a person's plant care tasks in a visual, fun, and creative manner. It utilizes an API with common plant names and their care requirements to make suggestions as well as facilitates an interactive and responsive UI for managing your daily, weekly, and monthly tasks!
+
+## How It Works
+------------
+
+The application runs as follows: 
+
+1. Adding a plant: The user can create a plant by going to the Add Plant section of the application where they will input the common name or something similar to their desired plant, then they can input a custom name, and let the application know when this plant was last watered. 
+
+2. Schedule Task: User can schedule tasks for their plants after a plant is created. They con choose from Watering, Fertilizing, or Picking and set the task's frequency and time of day. 
+
+3. My Garden: This is a visual representation of all the user's plants. It has a table with what a plant's watering suggestions (if they are in the databse) mean and when a plant's button is clicked, their information will show up in terms of name, plant in databse, last watered, watering suggestion, and all associated tasks as they were inputed. If the button is pressed again, properties will disappear. 
+
+4. Similarity Matching: When you ask a question, the app compares it with the text chunks and identifies the most semantically similar ones.
+
+5. View Task Schedule: Shows Task Schedule in a table and divides task by daily, weekly, and monthly tasks which are all given in chronological order.
+   
+6. View All Tasks: Shows all tasks ever created with the ability to delete the tasks. Also allows user to sort and filter tasks. 
+
+## Dependencies and Installation
+----------------------------
+To install the My Plant Care Assistant App, these steps musy be followed:
+
+1. Clone the repository to your local machine.
+
+2. Install the required dependencies by running the following commands:
+   ```
+   pip install streamlit
+   ```
+
+3. Optional to obtain your personal API key from the website see, but for purposes of project, one has been provided with minimum tokens, so please be wary of clearing cache and restarting app multiple times since could result in error. 
+```
+
+## Usage
+-----
+To run the app, open your terminal, navigate to the folder in which you have placed this project and type in 'streamlit run app.py'
+
 
 PlantCareAssistant.py
 #### `PlantCareAssistant` Class
