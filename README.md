@@ -1,6 +1,6 @@
 # 🎍My Plant Care Assistant 🪴
 <img width="1006" height="559" alt="Screenshot 2026-03-16 at 3 21 30 PM" src="https://github.com/user-attachments/assets/6e64f22d-8369-45c1-96d6-bd9f32344930" />
- (Check out plantcare-assistant-ppt.pdf for more demo details!
+** (Check out plantcare-assistant-ppt.pdf for more demo details!)**
  
 ## Introduction
 ------------
