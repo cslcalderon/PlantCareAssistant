@@ -1,5 +1,6 @@
 # 🎍My Plant Care Assistant 🪴
-
+<img width="1006" height="559" alt="Screenshot 2026-03-16 at 3 21 30 PM" src="https://github.com/user-attachments/assets/6e64f22d-8369-45c1-96d6-bd9f32344930" />
+ (Check out plantcare-assistant-ppt.pdf for more demo details!
 ## Introduction
 ------------
 My Plant Care Assistant is an application that can help manage a person's plant care tasks in a visual, fun, and creative manner. It utilizes an API with common plant names and their care requirements to make suggestions as well as facilitates an interactive and responsive UI for managing your daily, weekly, and monthly tasks!
